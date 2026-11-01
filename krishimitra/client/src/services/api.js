@@ -1,6 +1,6 @@
 // Baked in at BUILD time (Vite). Empty = same origin (dev proxy). A trailing slash is tolerated.
 const BASE = (import.meta.env.VITE_API_BASE_URL || "").trim().replace(/\/+$/, "");
-// Generous because a sleeping free-tier backend can take ~1 min to wake up; AI calls may retry server-side.
+// Generous because a sleeping free-tier server can take ~1 min to wake up; AI calls may retry server-side.
 const TIMEOUT_MS = 60000;
 const AI_TIMEOUT_MS = 100000;
 
@@ -22,7 +22,7 @@ async function request(path, { method = "GET", body, params, timeout = TIMEOUT_M
     });
   } catch (e) {
     if (e?.name === "AbortError") throw new ApiError("TIMEOUT", "The server took too long to respond. It may be waking up; please retry in a moment.", 0);
-    throw new ApiError("SERVER_UNREACHABLE", "KrishiMitra server is not reachable. Check that the backend is running and retry.", 0);
+    throw new ApiError("SERVER_UNREACHABLE", "KrishiMitra server is not reachable. Check that the server is running and retry.", 0);
   } finally {
     clearTimeout(timer);
   }

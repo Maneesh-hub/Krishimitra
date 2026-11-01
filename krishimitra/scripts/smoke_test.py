@@ -2,10 +2,10 @@
 """
 Post-deployment smoke test (standard library only).
 
-  python scripts/smoke_test.py --backend https://YOUR-API.onrender.com --frontend https://YOUR-APP.vercel.app
+  python scripts/smoke_test.py --server https://YOUR-API.onrender.com --client https://YOUR-APP.vercel.app
 
 Reports PASS / FAIL / NOTE per check. Nothing here sends secrets. The first request may take ~1 minute on a sleeping
-free-tier backend, so each request is retried a few times.
+free-tier server, so each request is retried a few times.
 """
 import argparse
 import json
@@ -53,13 +53,13 @@ def jget(url):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--backend", required=True)
-    ap.add_argument("--frontend", required=True)
+    ap.add_argument("--server", required=True)
+    ap.add_argument("--client", required=True)
     a = ap.parse_args()
-    be, fe = a.backend.rstrip("/"), a.frontend.rstrip("/")
+    be, fe = a.server.rstrip("/"), a.client.rstrip("/")
 
     s, j = jget(f"{be}/api/health?deep=true")
-    check("backend /api/health returns status ok", s == 200 and j and j.get("status") == "ok", f"HTTP {s}")
+    check("server /api/health returns status ok", s == 200 and j and j.get("status") == "ok", f"HTTP {s}")
     if j:
         sv = j["services"]
         note(f"weather reachable from server: {sv['weather'].get('reachable')}; mandi configured: {sv['mandi']['configured']}; "
@@ -73,7 +73,7 @@ def main():
 
     s, h, _ = req(f"{be}/api/health", method="OPTIONS", headers={"Origin": fe, "Access-Control-Request-Method": "POST", "Access-Control-Request-Headers": "content-type"})
     allow = {k.lower(): v for k, v in h.items()}.get("access-control-allow-origin")
-    check("CORS allows the frontend origin", allow == fe, f"allow-origin={allow!r} (set FRONTEND_ORIGIN={fe} on the backend)" if allow != fe else "")
+    check("CORS allows the client origin", allow == fe, f"allow-origin={allow!r} (set client_ORIGIN={fe} on the server)" if allow != fe else "")
 
     s, j = jget(f"{be}/api/weather?latitude=14.68&longitude=77.6")
     check("weather endpoint answers", s == 200 and j is not None, f"status={j and j.get('status')}")
@@ -99,16 +99,16 @@ def main():
         check("advisory returns a controlled error", s in (502, 503) and "error" in j, f"HTTP {s} code={j.get('error', {}).get('code')}")
 
     s, h, html = req(fe)
-    check("frontend loads", s == 200 and '<div id="root">' in html, f"HTTP {s}")
+    check("client loads", s == 200 and '<div id="root">' in html, f"HTTP {s}")
     s2, _, html2 = req(f"{fe}/mandi")
-    check("frontend deep link /mandi works (SPA rewrite)", s2 == 200 and '<div id="root">' in html2, f"HTTP {s2}")
+    check("client deep link /mandi works (SPA rewrite)", s2 == 200 and '<div id="root">' in html2, f"HTTP {s2}")
     m = re.search(r'src="(/assets/[^"]+\.js)"', html or "")
     if m:
         _, _, js = req(fe + m.group(1))
         host = urllib.parse.urlparse(be).netloc
-        check("frontend bundle points at the backend URL", host in js, "VITE_API_BASE_URL not baked in: set it in Vercel and redeploy" if host not in js else "")
+        check("client bundle points at the server URL", host in js, "VITE_API_BASE_URL not baked in: set it in Vercel and redeploy" if host not in js else "")
     else:
-        check("frontend JS bundle found", False)
+        check("client JS bundle found", False)
 
     print(f"\n{sum(results)}/{len(results)} checks passed")
     return 0 if all(results) else 1

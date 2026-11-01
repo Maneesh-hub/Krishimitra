@@ -194,6 +194,6 @@ def test_ai_sources_come_from_context_not_from_model_output(client, ai_on, monke
 
 
 # ---------------- CORS ----------------
-def test_frontend_origin_trailing_slash_and_lists_are_normalised(monkeypatch):
-    monkeypatch.setenv("FRONTEND_ORIGIN", "https://app.vercel.app/, http://localhost:5173")
+def test_client_origin_trailing_slash_and_lists_are_normalised(monkeypatch):
+    monkeypatch.setenv("client_ORIGIN", "https://app.vercel.app/, http://localhost:5173")
     assert config.allowed_origins() == ["https://app.vercel.app", "http://localhost:5173"]

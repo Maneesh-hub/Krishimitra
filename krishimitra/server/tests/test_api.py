@@ -172,9 +172,9 @@ def test_valid_ai_response_is_accepted_with_server_set_mode(client, monkeypatch)
     assert j["mode"] == "ai" and j["language"] == "en"
 
 
-def test_frontend_build_succeeds():
-    fe = Path(__file__).resolve().parents[2] / "frontend"
+def test_client_build_succeeds():
+    fe = Path(__file__).resolve().parents[2] / "client"
     if not shutil.which("npm") or not (fe / "node_modules").exists():
-        pytest.skip("run `npm install` in frontend/ first")
+        pytest.skip("run `npm install` in client/ first")
     r = subprocess.run(["npm", "run", "build"], cwd=fe, capture_output=True, text=True, timeout=240)
     assert r.returncode == 0, r.stdout[-800:] + r.stderr[-800:]

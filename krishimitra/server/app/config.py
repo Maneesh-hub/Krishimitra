@@ -28,15 +28,15 @@ class Settings:
     ceda_api_base_url: str
     mandi_default_unit: str
     mandi_stale_days: int
-    frontend_origin: str
+    client_origin: str
     app_env: str
     database_url: str
 
 
 def allowed_origins() -> list[str]:
-    """FRONTEND_ORIGIN may hold several comma-separated origins. A trailing slash is stripped because
+    """client_ORIGIN may hold several comma-separated origins. A trailing slash is stripped because
     browsers send origins without one (a pasted 'https://app.vercel.app/' would otherwise fail CORS)."""
-    return [o.strip().rstrip("/") for o in get_settings().frontend_origin.split(",") if o.strip()]
+    return [o.strip().rstrip("/") for o in get_settings().client_origin.split(",") if o.strip()]
 
 
 def get_settings() -> Settings:
@@ -51,7 +51,7 @@ def get_settings() -> Settings:
         ceda_api_base_url=(e("CEDA_API_BASE_URL") or "https://api.ceda.ashoka.edu.in/v1").strip().rstrip("/"),
         mandi_default_unit=(e("MANDI_DEFAULT_UNIT") or "").strip(),
         mandi_stale_days=int(e("MANDI_STALE_DAYS") or 3),
-        frontend_origin=(e("FRONTEND_ORIGIN") or "http://localhost:5173").strip(),
+        client_origin=(e("client_ORIGIN") or "http://localhost:5173").strip(),
         app_env=(e("APP_ENV") or "development").strip(),
         database_url=(e("DATABASE_URL") or "sqlite:///./krishimitra.db").strip(),
     )

@@ -217,7 +217,7 @@ def _demo_advisory(ctx: AdvisoryContext) -> AdvisoryResponse:
     intent = _intent(ctx.question)
     if intent is None:
         raise ApiError(503, "AI_NOT_CONFIGURED",
-                       "AI demo mode — configure the backend API key (GEMINI_API_KEY) for live AI responses.")
+                       "AI demo mode — configure the server API key (GEMINI_API_KEY) for live AI responses.")
     crop = ctx.crop.crop_name or ctx.crop.crop_id or "your crop"
     actions, used, sources = [], [f"Crop: {crop} (stage: {ctx.crop.growth_stage})",
                                   f"Location: {ctx.location.district}, {ctx.location.state}"], []

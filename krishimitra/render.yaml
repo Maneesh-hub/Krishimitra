@@ -4,15 +4,15 @@ services:
     name: krishimitra-api
     runtime: python
     plan: free
-    buildCommand: pip install -r backend/requirements.txt
-    startCommand: cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    buildCommand: pip install -r server/requirements.txt
+    startCommand: cd server && uvicorn app.main:app --host 0.0.0.0 --port $PORT
     healthCheckPath: /api/health
     envVars:
       - key: PYTHON_VERSION
         value: 3.12.8
       - key: APP_ENV
         value: production
-      - key: FRONTEND_ORIGIN
+      - key: client_ORIGIN
         sync: false          # you are prompted for it: your Vercel URL, no trailing slash
       - key: GEMINI_API_KEY
         sync: false
