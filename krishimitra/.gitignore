@@ -1,0 +1,52 @@
+
+# --- Secrets & local configuration ---
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+!**/.env.example
+*.pem
+*.key
+*.p12
+credentials*.json
+service-account*.json
+
+# --- Databases ---
+*.db
+*.db-*
+*.sqlite
+*.sqlite3
+
+# --- Python ---
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+.coverage
+htmlcov/
+
+# --- Node / frontend build artifacts ---
+node_modules/
+dist/
+build/
+.vite/
+*.local
+npm-debug.log*
+yarn-error.log*
+
+# --- Deployment tool state ---
+.vercel/
+.render/
+
+# --- OS / editor / logs ---
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.log
